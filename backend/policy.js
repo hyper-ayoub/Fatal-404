@@ -4,7 +4,13 @@ export function validateTelemetry(body) {
   if (!body || !['simulator', 'wokwi', 'vision'].includes(body.source)) throw new Error('Invalid source');
   if (body.source === 'vision') {
     if (!Array.isArray(body.detections) || body.detections.length > 100) throw new Error('Invalid detections');
-    return {source: body.source, detections: body.detections.map(d => {
+    const provenance={cameraSource:body.cameraSource || 'external'};
+    if(!['external','simulator','webcam','video'].includes(provenance.cameraSource))throw new Error('Invalid camera source');
+    if(provenance.cameraSource==='simulator') {
+      if(!body.frameRef || typeof body.frameRef.sessionId!=='string' || body.frameRef.sessionId.length>64 || !Number.isSafeInteger(body.frameRef.frameId) || !Number.isFinite(body.capturedAt))throw new Error('Missing simulator frame reference');
+      provenance.frameRef={sessionId:body.frameRef.sessionId,frameId:body.frameRef.frameId};provenance.capturedAt=body.capturedAt;
+    }
+    return {source: body.source, ...provenance, detections: body.detections.map(d => {
       if (typeof d.label !== 'string' || d.label.length > 80 || !Number.isFinite(d.confidence) || d.confidence < 0 || d.confidence > 1 || !['left','center','right'].includes(d.direction)) throw new Error('Invalid detection');
       return {label: d.label, confidence: d.confidence, direction: d.direction};
     })};

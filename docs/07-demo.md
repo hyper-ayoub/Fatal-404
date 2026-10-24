@@ -7,7 +7,7 @@ Run the checks, start the server, open one lab tab, test the camera worker if us
 ## Demonstration sequence
 
 1. **Problem (20 seconds):** explain the need for timely obstacle awareness plus brief, question-driven descriptions. Present this as a controlled assistive-technology prototype.
-2. **3D loop (40 seconds):** select the simulator. Click Open corridor, then Approaching obstacle, then Close obstacle. Point out measured distances, warning level and changing haptic pulse speed. Show the first-person view.
+2. **3D loop (40 seconds):** select the simulator. Walk along the neighborhood sidewalk and show the separate first-person view. Click Clear path, Approaching, then Close obstacle. Point out measured distances, warning level and changing haptic pulse speed. Open the synchronized camera-data endpoint to show the frame ID and metrics.
 3. **Embedded loop (40 seconds):** select Wokwi. Change center sensor from 250 cm to 100 cm to 40 cm. Show the servo and matching browser measurement. Explain that local warnings work independently from the AI request.
 4. **AI loop (40 seconds):** show real camera labels, ask “What is ahead of me?”, show the GEMMA badge and read the answer aloud. Explain that the model receives structured context; sensor distance and camera labels remain distinct.
 5. **Failure behavior (20 seconds):** stop Wokwi, wait three seconds, show unknown readings. Describe how stale readings are removed from the next model context.

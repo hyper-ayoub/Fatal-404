@@ -18,12 +18,13 @@ Options:
 
 ```powershell
 .\.venv\Scripts\python.exe vision/detect.py --source 1
+.\.venv\Scripts\python.exe vision/detect.py --source simulator
 .\.venv\Scripts\python.exe vision/detect.py --source sample.mp4 --headless
 .\.venv\Scripts\python.exe vision/detect.py --backend http://127.0.0.1:3001 --confidence 0.55
 ```
 
 Use Q in the camera preview to stop, or Ctrl+C for headless mode. Camera indices depend on your device. Give Python camera permission and close applications that hold exclusive camera access. The model is configurable using `--model`, but changing the model also changes attribution and performance requirements.
 
-The horizontal midpoint of the detection box determines left/center/right in the image. These directions are independent of the three sensor rays. Camera labels and distance readings are not matched into a single tracked object. Detection observations expire after 2.5 seconds, so an underpowered CPU might produce intermittent unknown camera state.
+Use `--source simulator` to process the first-person camera from the browser environment; keep its tab visible. This uses the synchronized JSON camera bundle described in [step 08](08-camera-integration.md). Simulated detections include the originating frame ID and capture time. The horizontal midpoint of the detection box determines left/center/right in the image. These directions are independent of the three sensor rays. Camera labels and distance readings are not matched into a single tracked object. Observations expire after 2.5 seconds, so slow inference can produce intermittent unknown camera state. YOLO's photo-trained categories may not reliably recognize stylized scene models.
 
 **Checkpoint:** hold a recognizable object in front of the webcam and observe its label under Camera in the lab. Stop the worker; the label must disappear after expiry.

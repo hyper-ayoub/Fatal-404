@@ -19,6 +19,7 @@ Manual checks still required on your hardware/accounts: Wokwi compilation and MQ
 - `POST /api/ask`: `{"question":"What is ahead?"}`; response includes `mode`, `model` and `text`.
 - `POST /api/speech`: `{"text":"Obstacle ahead."}`; configured ElevenLabs audio response.
 - `WS /ws`: broadcasts current state every 100 ms.
+- `GET /api/camera/latest.jpg`, `/api/camera/stream.mjpg`, `/api/camera/frame` and `/api/observation`: rendered images and synchronized sensor data; see [camera integration](08-camera-integration.md).
 
 Vision payload example:
 

@@ -33,4 +33,15 @@ test('HTTP -> state -> WebSocket -> assistant, source isolation and stale readin
   state=await (await fetch(`${base}/api/state`)).json();assert.equal(state.alert.level,'unknown');assert.equal(state.sensors,null);
   assert.equal((await post('ask',{question:''})).status,400);
   assert.equal((await fetch(`${base}/.env`)).status,404);
+  assert.equal((await fetch(`${base}/api/camera/latest.jpg`)).status,404);
+  const observation={sessionId:'test-camera',frameId:17,capturedAt:Date.now(),width:640,height:360,pose:{x:1,y:1.72,z:3,yaw:0,pitch:0},distances:{left:2,center:.5,right:3},image:Buffer.from([255,216,1,255,217]).toString('base64')};
+  assert.equal((await post('simulator/observation',observation)).status,200);
+  await post('source',{source:'simulator'});
+  state=await (await fetch(`${base}/api/observation`)).json();
+  assert.equal(state.sensors.frameId,state.camera.frameId);assert.equal(state.camera.frameId,17);assert.equal(state.alert.level,'danger');
+  const jpeg=await fetch(`${base}/api/camera/latest.jpg`);
+  assert.equal(jpeg.headers.get('x-frame-id'),'17');assert.equal(jpeg.headers.get('content-type'),'image/jpeg');
+  assert.deepEqual(Buffer.from(await jpeg.arrayBuffer()),Buffer.from(observation.image,'base64'));
+  const jsonFrame=await (await fetch(`${base}/api/camera/frame`)).json();assert.equal(jsonFrame.image,observation.image);assert.equal(jsonFrame.distances.center,.5);
+  assert.equal((await post('simulator/observation',observation)).status,400);
 });

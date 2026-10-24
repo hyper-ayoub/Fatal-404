@@ -24,6 +24,7 @@ Open **http://127.0.0.1:3000**. No account, Python, broker or API key is needed 
 6. [05 — Gemma questions and voice responses](docs/05-gemma-and-voice.md)
 7. [06 — Tests, deployment and troubleshooting](docs/06-testing-and-deployment.md)
 8. [07 — Final demonstration script](docs/07-demo.md)
+9. [08 — Consume real-time camera frames and sensor measurements](docs/08-camera-integration.md)
 
 Each guide identifies the exact source files and a checkpoint. These are sequential milestones in one integrated codebase, rather than copies of the same project.
 
@@ -37,7 +38,11 @@ backend/
 frontend/
   index.html          Accessible controls and lab layout
   style.css           Responsive visual design
-  app.js              Three.js world, ray distances, live state and voice UI
+  app.js              Live state, assistant and voice UI
+  simulator.js        Walking, dual cameras and synchronized image capture
+  world.js            Kenney neighborhood, lighting, props and raycast geometry
+  movement.js         Collision-aware walking
+  assets/kenney/      Local CC0 models, texture palette and original license
 firmware/wokwi/
   sketch.ino          ESP32 sensor reads, local haptics, MQTT integration
   diagram.json        Three ultrasonic sensors and a servo wired to ESP32
@@ -53,21 +58,32 @@ render.yaml           Optional Render service blueprint
 
 ## What is implemented
 
-- Local 3D scene, first-person view, movement, scenario presets and three ray measurements.
+- Walkable neighborhood with Kenney CC0 houses and trees, street furniture, shadows and collision-aware movement.
+- Simultaneous overview and first-person camera panels, mouse look, keyboard/touch walking and scenario presets.
+- Live 640×360 JPEG and MJPEG camera feeds, with synchronized frame IDs, timestamps, pose and three range measurements.
 - Server-owned sensor validation, active-source selection, 2.5-second freshness and deterministic warnings.
 - Browser WebSocket telemetry and optional spoken warnings / microphone dictation.
 - ESP32 firmware with local servo feedback even when the backend is disconnected.
 - MQTT transport connecting Wokwi's internet access to the laptop backend.
-- Optional real webcam labels using **YOLO11n (`yolo11n.pt`)**. No camera depth is claimed.
+- Optional **YOLO11n (`yolo11n.pt`)** detection from the simulator, webcam or a video. No camera depth is claimed.
 - Real Gemma API adapter, default model **`gemma-4-26b-a4b-it`**, plus optional ElevenLabs output.
 
 ## Prototype boundaries
 
-The 3D world and Wokwi are separate sensor producers. Selecting Wokwi does not automatically move Wokwi's distance sliders to match the 3D scene. No simulator image is sent through YOLO: the optional detector uses a real webcam or video file. Gemma receives fresh structured measurements and detection labels, not raw images. Monocular object labels cannot determine the distance of far obstacles; that would require calibrated depth/stereo or another range sensor. Movement in the visual simulator is free exploration, without collision prevention. Public MQTT is for non-sensitive demo values only. This is not a certified mobility aid and has not been validated for real navigation.
+The 3D world and Wokwi are separate sensor producers. Selecting Wokwi does not automatically move Wokwi's distance sliders to match the scene. The simulator produces rendered images, not real camera footage. Its images and sensor rays can be consumed together through the [camera integration API](docs/08-camera-integration.md); run the detector with `--source simulator` to process those images. Gemma currently receives structured measurements and detection labels, not raw images. Monocular labels do not measure metric distance. Walking uses horizontal footprint collisions and does not model stairs, physics or ultrasonic noise. Public MQTT is for non-sensitive demo values only. This prototype has not been validated for real navigation.
+
+## Live camera and measurements
+
+- [Latest JPEG](http://127.0.0.1:3000/api/camera/latest.jpg)
+- [MJPEG video stream](http://127.0.0.1:3000/api/camera/stream.mjpg)
+- [Synchronized image and metrics as JSON](http://127.0.0.1:3000/api/camera/frame)
+- [Complete backend observation](http://127.0.0.1:3000/api/observation)
+
+See [08 — Consume images and sensor metrics](docs/08-camera-integration.md) for payloads and a Python example. Keep the simulator tab open and visible to produce frames.
 
 ## Open-source and model attribution
 
-Project source is licensed **AGPL-3.0-only**; see [LICENSE](LICENSE). The optional Ultralytics dependency and YOLO weights have their own [licensing terms](https://docs.ultralytics.com/license/). Gemma weights are governed by [Gemma terms](https://ai.google.dev/gemma/terms); using the hosted API also requires the provider's service terms. Do not redistribute weights or credentials accidentally. Dependency metadata is in `package-lock.json` and `vision/requirements.txt`.
+Project source is licensed **AGPL-3.0-only**; see [LICENSE](LICENSE). Neighborhood models are from [Kenney City Kit Suburban](https://kenney.nl/assets/city-kit-suburban), licensed **CC0**, with their original license and [asset attribution](frontend/assets/ATTRIBUTION.md) included. The optional Ultralytics dependency and YOLO weights have their own [licensing terms](https://docs.ultralytics.com/license/). Gemma weights are governed by [Gemma terms](https://ai.google.dev/gemma/terms); using the hosted API also requires the provider's service terms. Do not redistribute weights or credentials accidentally. Dependency metadata is in `package-lock.json` and `vision/requirements.txt`.
 
 ## Reference documentation
 
