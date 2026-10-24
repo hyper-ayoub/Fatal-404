@@ -13,6 +13,15 @@ test('invalid and out-of-order camera observations are rejected',()=>{
   assert.throws(()=>store.put(input()),/Out-of-order/);
   for(const update of [{image:'nope'},{width:20},{pose:{x:NaN}},{capturedAt:0},{frameId:-1}])assert.throws(()=>createFrameStore().put({...input(),...update}));
 });
+test('an older simulator tab cannot overwrite the focused camera session',()=>{
+  const store=createFrameStore();store.claim('focused-tab');
+  assert.throws(()=>store.put(input()),/Another simulator tab/);
+  store.put({...input(),sessionId:'focused-tab'});
+  assert.throws(()=>store.claim('background-tab'),/Another camera session/);
+  store.claim('new-focus',true);assert.equal(store.current(),null);
+  assert.throws(()=>store.put({...input(),sessionId:'focused-tab',frameId:2}),/Another simulator tab/);
+  assert.equal(store.put({...input(),sessionId:'new-focus'}).sessionId,'new-focus');
+});
 test('walking stops at solid obstacles, slides alongside, and cannot tunnel',()=>{
   const boxes=[{minX:0,maxX:1,minZ:-2,maxZ:2}];
   const p={x:-1,z:0};moveWithCollisions(p,20,0,boxes);assert.ok(p.x<-.23);

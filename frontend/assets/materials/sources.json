@@ -1,0 +1,71 @@
+[
+  {
+    "asset": "asphalt_02",
+    "map": "color",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_diff_1k.jpg",
+    "file": "frontend\\assets\\materials\\asphalt_02-color.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "asphalt_02",
+    "map": "normal",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_nor_gl_1k.jpg",
+    "file": "frontend\\assets\\materials\\asphalt_02-normal.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "asphalt_02",
+    "map": "roughness",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/asphalt_02/asphalt_02_rough_1k.jpg",
+    "file": "frontend\\assets\\materials\\asphalt_02-roughness.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "pavement_03",
+    "map": "color",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_03/pavement_03_diff_1k.jpg",
+    "file": "frontend\\assets\\materials\\pavement_03-color.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "pavement_03",
+    "map": "normal",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_03/pavement_03_nor_gl_1k.jpg",
+    "file": "frontend\\assets\\materials\\pavement_03-normal.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "pavement_03",
+    "map": "roughness",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/pavement_03/pavement_03_rough_1k.jpg",
+    "file": "frontend\\assets\\materials\\pavement_03-roughness.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "color",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_02/plastered_wall_02_diff_1k.jpg",
+    "file": "frontend\\assets\\materials\\plastered_wall_02-color.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "normal",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_02/plastered_wall_02_nor_gl_1k.jpg",
+    "file": "frontend\\assets\\materials\\plastered_wall_02-normal.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "plastered_wall_02",
+    "map": "roughness",
+    "url": "https://dl.polyhaven.org/file/ph-assets/Textures/jpg/1k/plastered_wall_02/plastered_wall_02_rough_1k.jpg",
+    "file": "frontend\\assets\\materials\\plastered_wall_02-roughness.jpg",
+    "license": "CC0"
+  },
+  {
+    "asset": "kloppenheim_06_puresky",
+    "url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/kloppenheim_06_puresky_1k.hdr",
+    "file": "frontend\\assets\\materials\\neighborhood-sky.hdr",
+    "license": "CC0"
+  }
+]

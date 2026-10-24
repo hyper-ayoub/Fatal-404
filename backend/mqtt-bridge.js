@@ -41,18 +41,18 @@ export function createMqttBridge({onTelemetry, config=process.env}) {
   }
   return {
     status:()=>({...status}),
-    publishObservation(frame,alert) {
+    publishObservation(frame,alert,haptics) {
       if(!client?.connected)return;
       const {bytes,...data}=frame;
       publish(topics.simulatorTelemetry,{source:'simulator',sessionId:frame.sessionId,frameId:frame.frameId,capturedAt:frame.capturedAt,receivedAt:frame.receivedAt,distances:frame.distances});
-      publish(topics.observation,{...data,kind:'rendered-simulator-camera',alert,cameraFrameTopic:status.imagesEnabled?topics.cameraFrame:null});
+      publish(topics.observation,{...data,kind:'rendered-simulator-camera',alert,haptics,cameraFrameTopic:status.imagesEnabled?topics.cameraFrame:null});
       if(status.imagesEnabled && Date.now()-lastImageAt>=1000){
         lastImageAt=Date.now();publish(topics.cameraFrame,{...data,kind:'rendered-simulator-camera',mimeType:'image/jpeg',image:bytes.toString('base64')});
       }
     },
-    publishHaptic(alert,source) {
+    publishHaptic(alert,source,haptics) {
       const forward=source==='wokwi' || config.MQTT_FORWARD_SIM_HAPTICS==='true';
-      const body={source,level:forward?alert.level:'unknown',pulseMs:forward?alert.pulseMs:0};
+      const body={source,level:forward?alert.level:'unknown',pulseMs:forward?alert.pulseMs:0,...(forward?{temples:haptics}:{})};
       const command=JSON.stringify(body);
       if(client?.connected && (command!==lastHaptic || Date.now()-lastHapticAt>=1000)){
         publish(topics.haptic,command);lastHaptic=command;lastHapticAt=Date.now();

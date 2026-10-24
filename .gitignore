@@ -1,6 +1,8 @@
 node_modules/
 .env
 .venv/
+.venv-assistant/
+.pytest_cache/
 __pycache__/
 *.pt
 *.mp4

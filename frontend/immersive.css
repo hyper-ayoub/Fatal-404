@@ -1,0 +1,46 @@
+.camera-head-actions{display:flex;align-items:center;gap:12px}.camera-head-actions button{white-space:nowrap}
+#immersive-stage[hidden]{display:none}
+body.immersive{overflow:hidden}
+.immersive #immersive-stage{position:fixed;inset:0;z-index:100;background:#172a27;color:#f5f7ef;isolation:isolate;--rail-width:310px}
+.immersive-top{position:absolute;inset:0 0 auto;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:15px;padding:19px 24px;background:linear-gradient(#102723b8,transparent);pointer-events:none}
+.immersive-top>div,.immersive-top>button{pointer-events:auto}
+.immersive-top strong{font:650 22px 'Manrope',sans-serif;letter-spacing:-.7px;text-shadow:0 1px 10px #0005}
+.immersive-top strong span{font:9px 'DM Sans',sans-serif;letter-spacing:2px;margin-left:10px;color:#d3e1d6}
+.immersive-top p{font-size:11px;color:#e1e9dc;margin:7px 0 0;text-shadow:0 1px 4px #0009}
+#immersive-exit{background:#17382ddd;color:#f1f5eb;border-color:#ffffff35;padding:10px 13px;backdrop-filter:blur(15px)}
+#immersive-exit span{margin-left:8px;opacity:.65;font-size:9px}
+.immersive .camera-panel{position:absolute;inset:0;border:0;border-radius:0;background:#172a27;z-index:0;box-shadow:none;margin:0}
+.immersive .camera-panel>.panel-head,.immersive .pose-strip{display:none}
+.immersive .fp-wrap{position:absolute;inset:0;aspect-ratio:auto}
+.immersive #first-person canvas{object-fit:cover}
+.immersive .camera-corners{inset:90px 22px 22px;opacity:.25}
+.immersive .camera-hud{top:100px;left:24px;right:calc(var(--rail-width) + 44px)}
+.immersive .camera-bottom{left:24px;right:calc(var(--rail-width) + 44px);bottom:14px}
+.immersive .camera-actions{position:absolute;top:86px;left:24px;padding:0;z-index:2}
+.immersive .camera-actions>span{display:none}
+.immersive #mouse-look{padding:8px 11px;border:1px solid #ffffff45;border-radius:6px;background:#17382dc9;color:#eff5e8;backdrop-filter:blur(12px)}
+.immersive .camera-hud{top:135px}
+.immersive .world{position:absolute;left:24px;bottom:88px;width:clamp(220px,25vw,340px);height:210px;z-index:2;border:1px solid #ffffff80;box-shadow:0 12px 45px #081e2740;background:#fbfcf5e8;backdrop-filter:blur(18px);border-radius:12px;overflow:hidden;display:flex}
+.immersive .world .panel-head{padding:10px 12px;gap:5px}
+.immersive .world h2{font-size:12px;margin:0;color:#385447}
+.immersive .world .eyebrow,.immersive .world .location-pill,.immersive .world-overlay,.immersive .world-footer,.immersive #scene-error{display:none}
+.immersive .world .segmented{padding:1px}.immersive .world .segmented button{font-size:8px;padding:4px 6px}
+.immersive .world .scene-wrap{min-height:0;flex:1}
+.immersive .world .compass{height:38px;width:28px;right:8px;bottom:8px;font-size:6px;padding-top:4px}.immersive .world .compass b{font-size:17px}
+#immersive-rail{position:absolute;right:20px;top:82px;bottom:24px;width:var(--rail-width);z-index:3;overflow:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:#87a18a transparent;display:flex;flex-direction:column;gap:12px;border-radius:12px;filter:drop-shadow(0 8px 22px #10251d25)}
+.immersive .device-panel{flex:none;background:#f8faf2ed;backdrop-filter:blur(22px);border-color:#ffffff90;border-radius:12px}
+.immersive .device-panel .panel-head{padding:13px 16px 0}.immersive .device-panel h2{font-size:16px;color:#385447}.immersive .device-panel .eyebrow{font-size:8px}.immersive .device-stage{height:140px}.immersive .device-edition,.immersive .device-note,.immersive .device-stage-note,.immersive .device-callout span{display:none}
+.immersive .device-callout{font-size:9px}.immersive .temple-grid{padding:0 16px 14px;gap:20px}.immersive .temple-grid>div>span{font-size:8px}.immersive .temple-grid strong{font-size:12px;margin:5px 0 7px}
+.immersive .assistant{display:block;flex:none;margin:0;padding:16px;background:#fbfcf5f0;backdrop-filter:blur(22px);border-color:#ffffff80;border-radius:12px;color:#344f41}
+.immersive .assistant-intro{display:block}.immersive .assistant-intro h2,.immersive .assistant-intro>.small,.immersive .assistant-intro #detections,.immersive .assistant-intro .pill{display:none}.immersive .assistant-intro .eyebrow{font-size:9px;color:#60765f}
+.immersive .voice-toolbar{gap:7px;margin-top:10px}.immersive .voice-toolbar .primary{flex:1;padding:10px 8px;font-size:10px}.immersive .voice-toolbar>label{display:none}.immersive #voice-stop{padding:9px 8px}
+.immersive .voice-settings-row{gap:7px;margin:11px 0}.immersive .voice-settings-row label{display:none}.immersive .voice-settings-row select{font-size:10px;max-width:none;min-width:0;flex:1;padding:6px}.immersive .voice-settings-row button{font-size:9px}
+.immersive .conversation-state{padding:7px 9px;gap:8px}.immersive .voice-state{font-size:10px}.immersive .voice-transcript{font-size:10px;margin:9px 0;min-height:0}
+.immersive .question-row{gap:5px;flex-wrap:nowrap}.immersive .question-row input{font-size:11px;padding:9px;flex-basis:auto}.immersive .question-row button{font-size:10px;padding:8px}.immersive .question-row #microphone{display:none}.immersive .question-row #ask{flex:none}
+.immersive .assistant #answer{font-size:12px;line-height:1.65;padding:10px 11px;margin:10px 0;min-height:0;max-height:150px;overflow:auto}
+.immersive #voice-context{display:none}.immersive .audio-options{gap:9px}.immersive .audio-options .checkbox{font-size:9px}.immersive .audio-options #speak{font-size:9px}.immersive .audio-options label:has(#voice-warnings){display:none}
+#immersive-movement{position:absolute;left:24px;bottom:34px;z-index:3;background:#fbfcf4e8;border:1px solid #ffffff70;border-radius:9px;padding:7px;backdrop-filter:blur(18px)}
+.immersive .walk-controls{gap:5px}.immersive .walk-controls>.small{display:none}.immersive .walk-controls button{font-size:15px;padding:6px 11px}
+@media(min-width:1500px){.immersive #immersive-stage{--rail-width:350px}.immersive .device-stage{height:185px}.immersive .world{height:250px}.immersive .assistant #answer{font-size:14px}.immersive .assistant{padding:20px}}
+@media(max-width:700px){.camera-head-actions{gap:7px}.camera-head-actions .live-tag{display:none}.immersive #immersive-stage{--rail-width:255px}.immersive-top{padding:14px}.immersive-top strong{font-size:18px}.immersive-top strong span{display:none}.immersive-top p{font-size:9px;max-width:180px}.immersive-top button{font-size:10px}.immersive-top button span{display:none}#immersive-rail{right:10px;top:76px;bottom:14px;gap:9px}.immersive .world{left:12px;bottom:86px;width:180px;height:145px}.immersive .world h2{display:none}.immersive .world .panel-head{padding:5px 8px}.immersive .world .panel-head>div:first-child:after{content:'WORLD';font-size:8px;letter-spacing:1px;color:#62765e}.immersive .device-stage{height:115px}.immersive .device-panel h2{font-size:14px}.immersive .assistant{padding:12px}.immersive .camera-actions{left:14px;top:80px}.immersive .camera-hud{left:14px;top:125px}.immersive .camera-bottom{left:14px;right:14px;bottom:5px}.immersive .camera-bottom span:last-child{display:none}#immersive-movement{left:12px;bottom:35px;padding:5px}.immersive .walk-controls button{padding:5px 8px;font-size:13px}}
+@media(max-width:480px){.immersive #immersive-stage{--rail-width:205px}.immersive .world{width:140px;height:130px}.immersive .assistant .voice-toolbar .primary{font-size:9px}.immersive #voice-stop{font-size:9px}.immersive .device-panel h2{font-size:12px}.immersive .device-panel .eyebrow{display:none}.immersive .device-stage{height:105px}.immersive .temple-grid{gap:8px;padding:0 11px 10px}.immersive .temple-grid>div>span{font-size:7px}.immersive .temple-grid strong{font-size:10px}.immersive .voice-settings-row button{display:none}.immersive .assistant #answer{font-size:11px}.immersive .walk-controls{display:grid;grid-template-columns:repeat(3,1fr)}.immersive .camera-hud{display:none}.immersive .audio-options .checkbox{font-size:8px}.immersive .world .segmented button{font-size:7px}}

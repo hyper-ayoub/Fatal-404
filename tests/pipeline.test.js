@@ -3,9 +3,20 @@ import assert from 'node:assert/strict';
 import {spawn} from 'node:child_process';
 import {once} from 'node:events';
 import {WebSocket} from 'ws';
+import {createServer} from 'node:http';
 
 test('HTTP -> state -> WebSocket -> assistant, source isolation and stale readings', async t=>{
-  const child=spawn(process.execPath,['backend/server.js'],{env:{...process.env,PORT:'0',HOST:'127.0.0.1',AI_MODE:'demo',MQTT_ENABLED:'false'},stdio:['ignore','pipe','pipe']});
+  let releaseAnswer;
+  const gate=new Promise(resolve=>releaseAnswer=resolve);
+  const fakePython=createServer(async(req,res)=>{
+    let body='';for await(const chunk of req)body+=chunk;
+    assert.equal(JSON.parse(body).question,'Describe the view');
+    res.setHeader('Content-Type','application/x-ndjson');res.write(JSON.stringify({type:'ack',text:'Okay, I will assist you.'})+'\n');
+    await gate;res.end(JSON.stringify({type:'answer',text:'An obstacle is ahead.'})+'\n');
+  });
+  await new Promise(resolve=>fakePython.listen(0,'127.0.0.1',resolve));
+  t.after(()=>{releaseAnswer();fakePython.close();});
+  const child=spawn(process.execPath,['backend/server.js'],{env:{...process.env,PORT:'0',HOST:'127.0.0.1',AI_MODE:'demo',MQTT_ENABLED:'false',PYTHON_ASSISTANT_URL:`http://127.0.0.1:${fakePython.address().port}`},stdio:['ignore','pipe','pipe']});
   t.after(()=>child.kill());
   const base=await new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>reject(new Error('Server startup timed out')),10000);
@@ -44,4 +55,12 @@ test('HTTP -> state -> WebSocket -> assistant, source isolation and stale readin
   assert.deepEqual(Buffer.from(await jpeg.arrayBuffer()),Buffer.from(observation.image,'base64'));
   const jsonFrame=await (await fetch(`${base}/api/camera/frame`)).json();assert.equal(jsonFrame.image,observation.image);assert.equal(jsonFrame.distances.center,.5);
   assert.equal((await post('simulator/observation',observation)).status,400);
+  // The actual Node proxy must forward acknowledgment bytes while the answer
+  // provider is still blocked; buffering the full response would hang this read.
+  const turnResponse=await post('assistant/turn',{question:'Describe the view'});
+  const reader=turnResponse.body.getReader();
+  const firstChunk=await Promise.race([reader.read(),new Promise((_,reject)=>setTimeout(()=>reject(new Error('Acknowledgment was buffered')),2000))]);
+  assert.match(new TextDecoder().decode(firstChunk.value),/"ack"/);
+  releaseAnswer();
+  const answerChunk=await reader.read();assert.match(new TextDecoder().decode(answerChunk.value),/"answer"/);
 });

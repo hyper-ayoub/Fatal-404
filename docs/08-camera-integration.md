@@ -67,4 +67,4 @@ capture = cv2.VideoCapture('http://127.0.0.1:3000/api/camera/stream.mjpg')
 ok, image = capture.read()
 ```
 
-For an image-aware model, pass the decoded JPEG to its supported image-input API and use `distances` as the range context. The current Gemma adapter still uses structured labels and metrics; adding a frame source does not silently change that adapter into a multimodal integration.
+For an image-aware model, pass the decoded JPEG to its supported image-input API and use `distances` as the range context. The new [Python voice assistant](10-voice-assistant.md) implements this exact image-plus-metrics flow. The retained Node `/api/ask` adapter remains text-only.

@@ -12,7 +12,7 @@ Copy-Item .env.example .env
 npm start
 ```
 
-Open **http://127.0.0.1:3000**. No account, Python, broker or API key is needed for the default simulator. Choose **Close obstacle**, watch the distances and haptic indicator, then ask a question. Default answers are explicitly **scripted demo responses**. To use actual Gemma, follow step 05.
+Open **http://127.0.0.1:3000**. No account, Python, broker or API key is needed for the simulator itself. Choose **Close obstacle** and watch the distances and haptic indicator. For the new voice assistant, install the Python service using [step 10](docs/10-voice-assistant.md), then run `npm run start:all` instead of `npm start`. It immediately acknowledges requests, analyzes the actual image and matched sensor readings with Gemma when a key is configured, and speaks through ElevenLabs or browser speech. Without keys, its replies are visibly labeled demo responses.
 
 ## Implement step by step
 
@@ -26,6 +26,7 @@ Open **http://127.0.0.1:3000**. No account, Python, broker or API key is needed 
 8. [07 — Final demonstration script](docs/07-demo.md)
 9. [08 — Consume real-time camera frames and sensor measurements](docs/08-camera-integration.md)
 10. [09 — Connect the simulator to a real MQTT broker](docs/09-live-mqtt.md)
+11. [10 — Python voice assistant: acknowledgment, image analysis and spoken descriptions](docs/10-voice-assistant.md)
 
 Each guide identifies the exact source files and a checkpoint. These are sequential milestones in one integrated codebase, rather than copies of the same project.
 
@@ -35,7 +36,10 @@ Each guide identifies the exact source files and a checkpoint. These are sequent
 backend/
   policy.js           Telemetry validation, freshness, proximity thresholds
   server.js           HTTP API, live WebSocket state, MQTT bridge, speech proxy
-  assistant.js        Scripted demo or real Gemma 4 API adapter
+  assistant.js        Legacy Node text-only adapter (compatibility)
+  main.py             New Python multimodal voice-assistant API
+  services/           Scene snapshots, MQTT input, Gemma vision and ElevenLabs
+  legacy/             Preserved local-model / hosted-agent prototypes
 frontend/
   index.html          Accessible controls and lab layout
   style.css           Responsive visual design
@@ -43,6 +47,7 @@ frontend/
   simulator.js        Walking, dual cameras and synchronized image capture
   world.js            Kenney neighborhood, lighting, props and raycast geometry
   movement.js         Collision-aware walking
+  voice-assistant.js  Conversational listening, streamed turns and speech playback
   assets/kenney/      Local CC0 models, texture palette and original license
 firmware/wokwi/
   sketch.ino          ESP32 sensor reads, local haptics, MQTT integration
@@ -71,7 +76,7 @@ render.yaml           Optional Render service blueprint
 
 ## Prototype boundaries
 
-The 3D world and Wokwi are separate sensor producers. Selecting Wokwi does not automatically move Wokwi's distance sliders to match the scene. The simulator produces rendered images, not real camera footage. Its images and sensor rays can be consumed together through the [camera integration API](docs/08-camera-integration.md); run the detector with `--source simulator` to process those images. Gemma currently receives structured measurements and detection labels, not raw images. Monocular labels do not measure metric distance. Walking uses horizontal footprint collisions and does not model stairs, physics or ultrasonic noise. Public MQTT is for non-sensitive demo values only. This prototype has not been validated for real navigation.
+The 3D world and Wokwi are separate sensor producers. Selecting Wokwi does not automatically move Wokwi's distance sliders to match the scene. The simulator produces rendered images, not real camera footage. Its images and sensor rays can be consumed through the [camera integration API](docs/08-camera-integration.md); run the detector with `--source simulator` to process them. The new Python Gemma adapter receives the actual JPEG and sensor context; the retained Node adapter is text-only. Monocular labels do not measure metric distance. Walking uses horizontal footprint collisions and does not model stairs, physics or ultrasonic noise. Public MQTT is for non-sensitive demo values only. This prototype has not been validated for real navigation.
 
 ## Live camera and measurements
 
@@ -98,3 +103,7 @@ Project source is licensed **AGPL-3.0-only**; see [LICENSE](LICENSE). Neighborho
 - [ElevenLabs text to speech](https://elevenlabs.io/docs/api-reference/text-to-speech/convert)
 
 This folder is a local Git repository. Publishing to GitHub and obtaining a public submission link remain separate account actions.
+
+## Spatial Studio
+
+The upgraded walkable neighborhood, independent 3D temple haptics and conversational voice presets are documented in [Spatial Studio](docs/11-spatial-studio.md).

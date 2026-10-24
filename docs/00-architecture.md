@@ -16,7 +16,8 @@ flowchart LR
   POLICY -->|MQTT haptic command| BROKER
   BROKER --> ESP
   QUESTION[Typed or dictated question] --> API
-  API -->|Fresh structured context| GEMMA[Gemma 4 through Gemini API]
+  API -->|Fresh JPEG + matched measurements| PY[Python voice assistant]
+  PY --> GEMMA[Gemma 4 through Gemini API]
   GEMMA --> UI
   UI --> VOICE[Browser speech or ElevenLabs]
 ```
@@ -27,7 +28,7 @@ flowchart LR
 - **Three.js:** render a walkable Kenney neighborhood in overview and first-person views, raycast range geometry and upload synchronized JPEG/pose/metric bundles. It substitutes for distance hardware in local demo mode.
 - **YOLO11n:** recognize camera objects with confidence and horizontal image location. Detection does not measure depth.
 - **Node/Express:** orchestrate sources, reject malformed data, expire stale observations, expose APIs and relay MQTT.
-- **Gemma 4:** answer natural-language questions grounded in the current snapshot. It does not control servo thresholds.
+- **Python assistant + Gemma 4:** acknowledge immediately, analyze the actual camera JPEG and matched range context, and produce a short spoken answer. The retained Node adapter is text-only. AI prose does not control servo thresholds.
 - **Voice:** browser speech by default; ElevenLabs is an optional server-side adapter.
 
 ## Timing and authority

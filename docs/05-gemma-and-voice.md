@@ -1,5 +1,7 @@
 # 05 — Gemma 4 and voice
 
+The new assistant UI uses the Python multimodal flow documented in [step 10](10-voice-assistant.md). It sends the actual JPEG and its sensor context to Gemma, acknowledges first, then speaks the description. The text-only Node routes below remain for compatibility and direct API use.
+
 **Source:** `backend/assistant.js`, `/api/ask` and `/api/speech` in `backend/server.js`, voice controls in `frontend/app.js`.
 
 ## Enable real Gemma

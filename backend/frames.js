@@ -15,9 +15,15 @@ export function validateFrame(body) {
 }
 
 export function createFrameStore() {
-  let latest=null;
+  let latest=null,owner=null;
   return {
+    claim(sessionId,force=false) {
+      if(typeof sessionId!=='string' || !/^[a-zA-Z0-9-]{1,64}$/.test(sessionId))throw new Error('Invalid camera session');
+      if(owner && owner!==sessionId && latest && Date.now()-latest.receivedAt<=STALE_MS && !force)throw new Error('Another camera session is active');
+      const changed=owner!==sessionId;owner=sessionId;if(changed)latest=null;return changed;
+    },
     put(body) {
+      if(owner && body?.sessionId!==owner)throw new Error('Another simulator tab controls the live camera. Focus this tab to reconnect.');
       const frame=validateFrame(body);
       if(latest?.sessionId===frame.sessionId && frame.frameId<=latest.frameId) throw new Error('Out-of-order frame');
       latest={...frame,receivedAt:Date.now()};return latest;
