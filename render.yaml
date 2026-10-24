@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: openpilot-glasses
+    runtime: node
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/state
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: HOST
+        value: 0.0.0.0
+      - key: AI_MODE
+        value: demo
+      - key: MQTT_ENABLED
+        value: "false"
+      - key: GEMINI_API_KEY
+        sync: false

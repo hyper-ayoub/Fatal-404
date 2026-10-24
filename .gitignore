@@ -1,0 +1,8 @@
+node_modules/
+.env
+.venv/
+__pycache__/
+*.pt
+*.mp4
+*.log
+.DS_Store
