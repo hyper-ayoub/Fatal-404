@@ -95,3 +95,9 @@ npm run check
 Tests cover acknowledgment before scene retrieval, image/metric payload pairing, stale-frame failures, provider errors, MQTT fallback, secret isolation and speech adapters. A Node proxy test confirms acknowledgment bytes arrive while the answer provider is blocked. Provider tests use mocked HTTP responses. Live provider success and microphone behavior need verification with your keys/device.
 
 Official references: [Gemma multimodal API](https://ai.google.dev/gemma/docs/core/gemma_on_gemini_api), [transcription](https://elevenlabs.io/docs/api-reference/speech-to-text/convert), [streamed speech](https://elevenlabs.io/docs/api-reference/text-to-speech/stream), [voice model selection](https://elevenlabs.io/docs/eleven-api/choosing-the-right-model).
+
+## Immediate OpenAI fallback
+
+Set `OPENAI_API_KEY` and optionally `OPENAI_FALLBACK_MODEL` (default `gpt-4.1-mini`) in the root `.env`. With a fallback key present, Gemma gets one attempt with a five-second request timeout. Any provider error, timeout or empty description immediately invokes OpenAI Responses using the same camera JPEG, range readings, question and conversation context. There is no retry delay before fallback. OpenAI uses a 15-second request timeout, low-detail image input and `store: false`. The UI labels the actual answer provider, including in immersive mode. Explicit demo mode does not invoke paid fallback. If both providers fail, a fresh sensor-only warning is labeled as image analysis unavailable.
+
+References: https://developers.openai.com/api/docs/models/gpt-4.1-mini and https://developers.openai.com/api/docs/guides/images-vision?api-mode=responses.

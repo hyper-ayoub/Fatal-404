@@ -15,6 +15,7 @@ from .services.gemma import GemmaService, ProviderError
 from .services.mqtt_bridge import AssistantMqttBridge
 from .services.scene_state import SceneProvider, SceneState
 from .services.speech import SpeechService
+from .services.vision_fallback import OpenAIVisionService, VisionFallbackService
 
 
 class HistoryItem(BaseModel):
@@ -37,7 +38,8 @@ def create_app(settings=None, scene_provider=None, gemma_service=None, speech_se
             state = SceneState()
             bridge = AssistantMqttBridge(settings, state)
             app.state.bridge = bridge
-            app.state.assistant = AssistantService(settings, scene_provider or SceneProvider(client, settings, state), gemma_service or GemmaService(client, settings))
+            vision = gemma_service or VisionFallbackService(GemmaService(client, settings), OpenAIVisionService(client, settings), settings)
+            app.state.assistant = AssistantService(settings, scene_provider or SceneProvider(client, settings, state), vision)
             app.state.speech = speech_service or SpeechService(client, settings)
             app.state.ack_audio = {}
             bridge.start()

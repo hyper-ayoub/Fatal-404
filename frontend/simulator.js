@@ -73,7 +73,7 @@ export async function startSimulator(onTick) {
   function setView(map) {mapMode=map;orbit.enabled=!map;$('view').classList.toggle('selected',!map);$('map-view').classList.toggle('selected',map);if(!map){camera.position.set(position.x+18,22,position.z+19);orbit.target.set(position.x,0,position.z-4);previousTarget.copy(orbit.target);}}
   $('view').onclick=()=>setView(false);$('map-view').onclick=()=>setView(true);
   const capture=document.createElement('canvas');capture.width=640;capture.height=360;const ctx=capture.getContext('2d',{alpha:false});
-  $('snapshot').onclick=()=>{const a=document.createElement('a');a.download=`openpilot-${frameId}.jpg`;a.href=capture.toDataURL('image/jpeg',.9);a.click();};
+  $('snapshot').onclick=()=>{const a=document.createElement('a');a.download=`sensepath-${frameId}.jpg`;a.href=capture.toDataURL('image/jpeg',.9);a.click();};
   const raycaster=new THREE.Raycaster();raycaster.far=8;raycaster.layers.enable(2);
   const toBase64=blob=>new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result.split(',')[1]);reader.onerror=reject;reader.readAsDataURL(blob);});
   let publishedAt=0,previousPublish=0;

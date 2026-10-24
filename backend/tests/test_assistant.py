@@ -16,7 +16,7 @@ from backend.services.speech import SpeechService
 
 
 def settings(**kwargs):
-    return Settings(mode='demo', gemma_key='', eleven_key='', voice_id='', mqtt_enabled=False, **kwargs)
+    return Settings(mode='demo', gemma_key='', openai_key='', eleven_key='', voice_id='', mqtt_enabled=False, **kwargs)
 
 
 def frame():

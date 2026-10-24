@@ -1,4 +1,4 @@
-# OpenPilot Glasses
+# SensePath Glasses
 
 An assistive-glasses hackathon prototype built from the **Hackathon Ideas Generation** conversation: simulate embedded sensors in Wokwi, detect objects with a webcam, answer environment questions using Gemma 4, and demonstrate the complete pipeline in a browser-based 3D lab.
 

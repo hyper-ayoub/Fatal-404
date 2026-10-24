@@ -28,7 +28,7 @@ export class VoiceAssistant {
       const response=await fetch('/api/assistant/config');const data=await response.json();
       if(!response.ok)throw new Error(data.error || data.detail || 'Python backend is offline');
       this.config=data;
-      $('ai-mode').textContent=data.mode==='gemma'?'PYTHON · GEMMA VISION':'PYTHON · DEMO';
+      $('ai-mode').textContent=data.mode==='gemma'?(data.fallbackConfigured?'GEMMA · OPENAI BACKUP':'PYTHON · GEMMA VISION'):'PYTHON · DEMO';
       $('eleven').checked=data.voiceConfigured;
       this.status(data.mode==='demo'?'Ready · demo until Gemma keys are added':'Ready to listen');
     } catch(e) {this.status('Python assistant offline','error');$('answer').textContent=e.message;}
@@ -178,8 +178,9 @@ export class VoiceAssistant {
           $('answer').textContent=data.text;this.lastAnswer=data.text;this.lastEvent=data;
           this.status(data.type==='error'?data.text:'Speaking the description…',data.type==='error'?'error':'speaking');
           if(data.type==='answer'){
-            finalAnswer=data.text;$('ai-mode').textContent=data.mode==='gemma'?'PYTHON · GEMMA VISION':'PYTHON · DEMO';
+            finalAnswer=data.text;$('ai-mode').textContent=data.mode==='openai'?`OPENAI · ${data.model.toUpperCase()} · FALLBACK`:data.mode==='gemma'?'PYTHON · GEMMA VISION':'PYTHON · DEMO';
           }
+          if(data.mode==='sensor-only')$('ai-mode').textContent='LIVE SENSORS · IMAGE AI UNAVAILABLE';
           queue=queue.then(()=>this.play(data,token));
         }
       };

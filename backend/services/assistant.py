@@ -60,7 +60,19 @@ class AssistantService:
                    'sceneAgeMs': max(0, int(time.time()*1000-scene['capturedAt'])),
                    'elapsedMs': round((time.monotonic()-started)*1000),
                    'audioUrl': f'/api/assistant/audio/{turn_id}/answer'}
-        except (SceneUnavailable, ProviderError) as error:
+        except ProviderError:
+            # Refresh readings after inference/retries; never speak an old range
+            # reading as though it were current, or invent a visual description.
+            text = 'Image analysis is unavailable right now.'
+            try:
+                current = await self.scene.snapshot()
+                text += ' Live sensors: ' + current['alert']['message']
+            except SceneUnavailable:
+                text += ' No fresh camera or sensor context is available. Please try again.'
+            self.turns[turn_id]['text'] = text
+            yield {'type': 'error', 'turnId': turn_id, 'text': text,
+                   'mode': 'sensor-only', 'audioUrl': f'/api/assistant/audio/{turn_id}/answer'}
+        except SceneUnavailable as error:
             self.turns[turn_id]['text'] = str(error)
             yield {'type': 'error', 'turnId': turn_id, 'text': str(error),
                    'audioUrl': f'/api/assistant/audio/{turn_id}/answer'}

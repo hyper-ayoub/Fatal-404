@@ -19,6 +19,8 @@ class Settings:
     mode: str = field(default_factory=lambda: os.getenv('ASSISTANT_MODE', 'auto'))
     gemma_key: str = field(default_factory=lambda: credential(os.getenv('GEMMA_API_KEY')) or credential(os.getenv('GEMINI_API_KEY')))
     gemma_model: str = field(default_factory=lambda: os.getenv('GEMMA_MODEL', 'gemma-4-26b-a4b-it'))
+    openai_key: str = field(default_factory=lambda: credential(os.getenv('OPENAI_API_KEY')))
+    openai_model: str = field(default_factory=lambda: os.getenv('OPENAI_FALLBACK_MODEL', 'gpt-4.1-mini'))
     eleven_key: str = field(default_factory=lambda: credential(os.getenv('ELEVENLABS_API_KEY')))
     voice_id: str = field(default_factory=lambda: credential(os.getenv('ELEVENLABS_VOICE_ID')) or 'EXAVITQu4vr4xnSDxMaL')
     speech_model: str = field(default_factory=lambda: os.getenv('ELEVENLABS_TTS_MODEL', 'eleven_multilingual_v2'))
@@ -38,6 +40,7 @@ class Settings:
 
     def public(self):
         return {'mode': self.effective_mode, 'gemmaConfigured': bool(self.gemma_key),
-                'model': self.gemma_model, 'voiceConfigured': bool(self.eleven_key and self.voice_id),
+                'model': self.gemma_model, 'fallbackConfigured': bool(self.openai_key),
+                'fallbackModel': self.openai_model, 'voiceConfigured': bool(self.eleven_key and self.voice_id),
                 'transcriptionConfigured': bool(self.eleven_key), 'backend': 'python',
                 'acknowledgment': "Of course. Let me take a look."}

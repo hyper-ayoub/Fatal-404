@@ -40,16 +40,32 @@ class GemmaService:
         ]})
         model = self.settings.gemma_model
         payload = {'systemInstruction': {'parts': [{'text': RULES}]}, 'contents': contents,
-                   'generationConfig': {'maxOutputTokens': 160,
+                   'generationConfig': {'maxOutputTokens': 256,
                                         'thinkingConfig': {'thinkingLevel': 'minimal'}}}
+        # A compact, single-turn recovery request preserves the actual image and
+        # sensor context while avoiding history/system-template failures upstream.
+        recovery = {'contents': [{'role': 'user', 'parts': [contents[-1]['parts'][0],
+            {'text': 'Describe the image briefly in the user\'s language. Use only supplied readings for distances; do not promise a safe route.\n'
+                     + contents[-1]['parts'][1]['text']}]}], 'generationConfig': payload['generationConfig']}
         try:
-            for attempt in range(2):
-                response = await self.client.post(
-                    f'https://generativelanguage.googleapis.com/v1beta/models/{quote(model, safe="")}:generateContent',
-                    headers={'x-goog-api-key': self.settings.gemma_key}, json=payload, timeout=25)
-                if response.status_code not in (500, 502, 503, 504) or attempt == 1:
+            response = None
+            attempts = 1 if self.settings.openai_key else 3
+            for attempt in range(attempts):
+                if attempt:
+                    await asyncio.sleep(2 ** (attempt - 1))
+                try:
+                    response = await self.client.post(
+                        f'https://generativelanguage.googleapis.com/v1beta/models/{quote(model, safe="")}:generateContent',
+                        headers={'x-goog-api-key': self.settings.gemma_key},
+                        json=payload if attempt == 0 else recovery, timeout=5 if self.settings.openai_key else 8)
+                except (httpx.TimeoutException, httpx.NetworkError):
+                    if attempt == attempts - 1:
+                        raise ProviderError('Gemma image analysis is temporarily unavailable. Please try again shortly.')
+                    continue
+                if response.status_code not in (500, 502, 503, 504):
                     break
-                await asyncio.sleep(.4)
+            if response.status_code in (500, 502, 503, 504):
+                raise ProviderError('Gemma image analysis is temporarily unavailable. Please try again shortly.')
             if response.status_code != 200:
                 try:
                     detail = response.json().get('error', {}).get('message', '')
@@ -68,5 +84,5 @@ class GemmaService:
             if len(words) > 60:
                 text = ' '.join(words[:60]).rstrip(' ,;:') + '.'
             return {'text': text, 'mode': 'gemma', 'model': model}
-        except httpx.HTTPError as error:
+        except (httpx.HTTPError, ValueError, TypeError) as error:
             raise ProviderError('Gemma is unavailable or timed out. Please try again.') from error

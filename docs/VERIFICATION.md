@@ -63,3 +63,12 @@ Gemma key and request fix verified after keys were supplied:
 - Browser checks confirmed native full screen, the viewport layout, live first-person frames, corner world view with Perspective/Map toggle, independent haptic indicators and the nearby existing assistant controls.
 - Touch Walk left moved x from 5.70 to 5.26 m. Escape and the Exit button restored all panels and controls to the studio. The full-screen canvas uses 960 x 540 in balanced mode and returns to 640 x 360 after exit; the exported image remains 640 x 360 throughout.
 - Typed assistant requests from the full-screen panel received acknowledgment and matched live frame context. The external Gemma provider timed out on one test and returned HTTP 500 on the retry; successful scene inference was not verified in this turn. Microphone permission was not requested during testing. Speak replies was restored afterward.
+
+## OpenAI vision fallback
+
+- Added GPT-4.1 mini through the Responses API, using the same camera image and sensor context, server-only authentication and store:false.
+- With OpenAI configured, the first Gemma error or empty reply immediately switches providers; a stalled Gemma request has a five-second timeout and is not retried first.
+- All 17 Python tests and 12 Node tests passed. Tests cover Gemma 500/timeout/empty-output failover, preserving image bytes and readings, correct provider labels, no fallback on primary success, secret-safe errors and explicit demo-mode isolation. JavaScript syntax checks passed.
+- A real OpenAI request successfully analyzed both a saved simulator JPEG and a current live camera frame.
+- A controlled failure test injected only a Google HTTP 500 while sending the real live frame to OpenAI: Google 500 -> OpenAI HTTP 200, producing an actual GPT-4.1 mini description in 3.08 seconds.
+- Browser testing confirmed acknowledgment, matched live frame metadata and a successful Gemma primary answer. One earlier live attempt reached sensor-only fallback before subsequent provider verification succeeded; external-provider latency is variable. Microphone permissions were not requested.
