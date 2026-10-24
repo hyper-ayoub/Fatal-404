@@ -9,3 +9,17 @@ __pycache__/
 
 .asset-import/
 observations/
+
+
+# Python virtual environment
+venv/
+
+
+# Python cache
+
+*.py[cod]
+
+# Secrets
+
+.env.*
+!.env.example
