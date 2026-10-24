@@ -34,7 +34,8 @@ function connect() {
     document.body.dataset.level=state.alert.level;
     $('level').textContent=({danger:'Close obstacle',warning:'Approaching obstacle',clear:'No close return',unknown:'Sensor data unknown'})[state.alert.level];
     $('warning').textContent=state.alert.message;
-    $('broker').textContent=`MQTT ${state.mqttConnected ? 'connected' : 'disconnected'} · active: ${state.activeSource}`;
+    $('broker').textContent=`MQTT ${state.mqttConnected ? 'connected' : 'disconnected'} · ${state.mqtt?.publishedMessages || 0} sent`;
+    if($('mqtt-feed'))$('mqtt-feed').textContent=state.mqttConnected?`${state.mqtt.broker} · ${state.mqtt.topicPrefix}`:state.mqtt?.lastError || 'MQTT disconnected';
     $('ai-mode').textContent=state.aiMode === 'gemma' ? 'GEMMA · LIVE API' : 'SCRIPTED DEMO';
     $('detections').textContent='Object detections: '+(state.vision?.detections.map(d=>`${d.label} ${Math.round(d.confidence*100)}% (${d.direction})`).join(', ') || 'no recent observations · start the vision worker');
     if(state.activeSource==='wokwi')$('stream-note').textContent='Camera: rendered simulator · distance warning: Wokwi. These sources are independent.';

@@ -20,6 +20,13 @@ Environment Studio upgrade verified:
 - Opened the live MJPEG endpoint and verified its multipart JPEG header; live camera and sensor frame IDs matched in `/api/observation`.
 - Saved updated screenshots as `docs/images/environment-studio.png` and `docs/images/camera-and-sensors.png`.
 
-Not verified in this workspace: Arduino compilation, a running Wokwi project, live MQTT round trip, webcam inference/model download, real Gemma credentials and quota, ElevenLabs playback, microphone dictation, Docker build, or remote hosting. Source code and setup guides are included for these integrations; they are not represented as tested external services.
+Live MQTT upgrade verified:
+
+- Connected to the actual HiveMQ public broker at `broker.hivemq.com:1883`.
+- An independent subscriber received 8 non-retained messages spanning simulator telemetry, observations, camera frames and haptic commands.
+- Confirmed the camera payload contained 22,567 JPEG bytes and shared the frame ID of the corresponding sensor observation.
+- All 9 automated tests and JavaScript syntax checks still passed after integrating the MQTT bridge.
+
+Not verified in this workspace: Arduino compilation, a running Wokwi project, a physical ESP32/servo, webcam inference/model download, real Gemma credentials and quota, ElevenLabs playback, microphone dictation, Docker build, or remote hosting. Source code and setup guides are included for these integrations; they are not represented as tested external services.
 
 ![Local browser preview](images/lab-preview.png)

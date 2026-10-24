@@ -5,7 +5,7 @@
   "type": "module",
   "description": "Assistive glasses hackathon prototype with Wokwi, 3D simulation and Gemma",
   "license": "AGPL-3.0-only",
-  "scripts": {"start": "node backend/server.js", "dev": "node --watch backend/server.js", "test": "node --test", "check": "node --check backend/server.js && node --check backend/frames.js && node --check frontend/app.js && node --check frontend/simulator.js && node --check frontend/world.js && node --check frontend/movement.js"},
+  "scripts": {"start": "node backend/server.js", "dev": "node --watch backend/server.js", "test": "node --test", "mqtt:monitor": "node examples/mqtt-monitor.js", "check": "node --check backend/server.js && node --check backend/mqtt-bridge.js && node --check backend/frames.js && node --check frontend/app.js && node --check frontend/simulator.js && node --check frontend/world.js && node --check frontend/movement.js"},
   "engines": {"node": ">=22"},
   "dependencies": {"dotenv": "^16.4.7", "express": "^5.1.0", "mqtt": "^5.10.4", "three": "^0.180.0", "ws": "^8.18.0"}
 }

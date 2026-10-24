@@ -25,6 +25,7 @@ Open **http://127.0.0.1:3000**. No account, Python, broker or API key is needed 
 7. [06 — Tests, deployment and troubleshooting](docs/06-testing-and-deployment.md)
 8. [07 — Final demonstration script](docs/07-demo.md)
 9. [08 — Consume real-time camera frames and sensor measurements](docs/08-camera-integration.md)
+10. [09 — Connect the simulator to a real MQTT broker](docs/09-live-mqtt.md)
 
 Each guide identifies the exact source files and a checkpoint. These are sequential milestones in one integrated codebase, rather than copies of the same project.
 
@@ -78,8 +79,11 @@ The 3D world and Wokwi are separate sensor producers. Selecting Wokwi does not a
 - [MJPEG video stream](http://127.0.0.1:3000/api/camera/stream.mjpg)
 - [Synchronized image and metrics as JSON](http://127.0.0.1:3000/api/camera/frame)
 - [Complete backend observation](http://127.0.0.1:3000/api/observation)
+- [Live MQTT connection and topic names](http://127.0.0.1:3000/api/mqtt)
 
 See [08 — Consume images and sensor metrics](docs/08-camera-integration.md) for payloads and a Python example. Keep the simulator tab open and visible to produce frames.
+
+The simulator can also publish through an actual MQTT broker: sensor/pose messages at up to 5 Hz and optional rendered JPEG bundles at 1 Hz. Run `npm run mqtt:monitor` to subscribe using your `.env` settings. See [09 — Live MQTT](docs/09-live-mqtt.md) for topics and verification.
 
 ## Open-source and model attribution
 

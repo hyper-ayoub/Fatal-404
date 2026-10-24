@@ -36,6 +36,6 @@ All values are metres; out-of-range/no-echo is `null`. Wokwi range is 2–400 cm
 {"level":"danger","pulseMs":180}
 ```
 
-Commands are non-retained and refreshed every second; firmware expires remote commands after 2.5 seconds. Firmware derives the pulse rate from the allowed level. The local proximity warning takes precedence whenever it is more urgent than a remote command. Simulator mode sends no remote warning, but local Wokwi sensing still operates.
+Commands are non-retained and refreshed every second; firmware expires remote commands after 2.5 seconds. Firmware derives the pulse rate from the allowed level. The local proximity warning takes precedence whenever it is more urgent than a remote command. Set `MQTT_FORWARD_SIM_HAPTICS=true` to let simulator proximity warnings drive the servo through the same broker; otherwise simulator mode sends an unknown/no-pulse remote command. Local Wokwi sensing still operates. See [live MQTT setup](09-live-mqtt.md) for the simulator publishing topics.
 
 **Checkpoint:** changing Wokwi sensor distance reaches the browser and servo; stop the backend and confirm local sensor-to-servo behavior continues.

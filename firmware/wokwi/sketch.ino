@@ -7,7 +7,7 @@
 const char* BROKER = "broker.hivemq.com";
 const int BROKER_PORT = 1883;
 // MUST match MQTT_SESSION in the backend .env. Choose your own unique value.
-const char* SESSION = "um6p-change-me-2026";
+const char* SESSION = "um6p-0654c473a7b4";
 const int TRIG[] = {5, 19, 22};
 const int ECHO[] = {18, 21, 23};
 WiFiClient network;

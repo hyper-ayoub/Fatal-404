@@ -4,10 +4,10 @@ import {createServer} from 'node:http';
 import {fileURLToPath} from 'node:url';
 import {resolve, dirname} from 'node:path';
 import {WebSocketServer, WebSocket} from 'ws';
-import mqtt from 'mqtt';
 import {validateTelemetry, evaluate, STALE_MS} from './policy.js';
 import {answerQuestion} from './assistant.js';
 import {createFrameStore} from './frames.js';
+import {createMqttBridge} from './mqtt-bridge.js';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const app = express();
@@ -22,26 +22,24 @@ let activeSource = 'simulator';
 const samples = {};
 const frames = createFrameStore();
 const streamClients = new Set();
-let broker = null;
-let mqttConnected = false;
-let previousCommand = '';
-let commandSentAt = 0;
-const topic = `openpilot/${process.env.MQTT_SESSION || 'um6p-change-me-2026'}`;
+const mqttBridge=createMqttBridge({onTelemetry:ingest});
 function snapshot() {
   const now = Date.now();
   return {activeSource, sensors:samples[activeSource] && now - samples[activeSource].receivedAt <= STALE_MS ? samples[activeSource] : null,
     vision:samples.vision && now - samples.vision.receivedAt <= STALE_MS && now-(samples.vision.capturedAt ?? samples.vision.receivedAt)<=STALE_MS ? samples.vision : null,
-    camera:frames.metadata(now), alert:evaluate(samples, activeSource, now), aiMode:process.env.AI_MODE || 'demo', mqttConnected, timestamp:now};
+    camera:frames.metadata(now), alert:evaluate(samples, activeSource, now), aiMode:process.env.AI_MODE || 'demo', mqttConnected:mqttBridge.status().connected, mqtt:mqttBridge.status(), timestamp:now};
 }
 function ingest(body) {
   const data = validateTelemetry(body);
   samples[data.source] = {...data, receivedAt:Date.now()};
 }
 app.get('/api/state', (req,res) => res.json(snapshot()));
+app.get('/api/mqtt', (req,res) => res.set('Cache-Control','no-store').json(mqttBridge.status()));
 app.post('/api/simulator/observation', (req,res) => {
   try {
     const frame=frames.put(req.body);
     samples.simulator={source:'simulator',distances:frame.distances,receivedAt:frame.receivedAt,frameId:frame.frameId,sessionId:frame.sessionId};
+    mqttBridge.publishObservation(frame,evaluate(samples,'simulator'));
     res.json({ok:true,frameId:frame.frameId,receivedAt:frame.receivedAt});
   } catch(e) {res.status(400).json({error:e.message});}
 });
@@ -102,22 +100,11 @@ app.use((err,req,res,next) => res.status(400).json({error:'Invalid request body'
 const server = createServer(app);
 const wss = new WebSocketServer({server, path:'/ws'});
 wss.on('connection', socket => socket.send(JSON.stringify(snapshot())));
-if (process.env.MQTT_ENABLED === 'true') {
-  broker = mqtt.connect(process.env.MQTT_URL || 'mqtt://broker.hivemq.com:1883', {clientId:`openpilot-backend-${crypto.randomUUID()}`, reconnectPeriod:3000});
-  broker.on('connect', () => {mqttConnected = true; broker.subscribe(`${topic}/telemetry`); previousCommand = '';});
-  broker.on('close', () => {mqttConnected = false;});
-  broker.on('error', e => console.error('MQTT:', e.message));
-  broker.on('message', (name,payload,packet) => {
-    if (packet.retain) return;
-    try {const body = JSON.parse(payload.toString()); if(body.source !== 'wokwi') return; ingest(body);} catch {console.error('Ignored invalid MQTT telemetry');}
-  });
-}
 const timer = setInterval(() => {
   const state = snapshot();
   for (const client of wss.clients) if(client.readyState === WebSocket.OPEN && client.bufferedAmount < 65536) client.send(JSON.stringify(state));
-  const command = JSON.stringify(activeSource === 'wokwi' ? {level:state.alert.level,pulseMs:state.alert.pulseMs} : {level:'unknown',pulseMs:0});
-  if (broker?.connected && (command !== previousCommand || Date.now()-commandSentAt>1000)) {broker.publish(`${topic}/haptic`,command,{retain:false}); previousCommand = command; commandSentAt=Date.now();}
+  mqttBridge.publishHaptic(state.alert,activeSource);
 }, 100);
 server.listen(Number(process.env.PORT || 3000), process.env.HOST || '127.0.0.1', () => console.log(`OpenPilot Glasses: http://${process.env.HOST || '127.0.0.1'}:${server.address().port}`));
-function close() { clearInterval(timer); broker?.end(true); for(const response of streamClients)response.end(); for(const c of wss.clients) c.terminate(); wss.close(); server.close(() => process.exit(0)); }
+function close() { clearInterval(timer); mqttBridge.close(); for(const response of streamClients)response.end(); for(const c of wss.clients) c.terminate(); wss.close(); server.close(() => process.exit(0)); }
 process.on('SIGINT',close); process.on('SIGTERM',close);
